@@ -141,7 +141,7 @@ export AWS_SECRET_ACCESS_KEY="${secret_access_key}"
 
 # do a sync -> delete no longer existing objects
 echo_info "$ aws s3 sync ${expanded_upload_local_path} ${s3_url} --delete --acl ${aclcmd}"
-aws s3 sync "${expanded_upload_local_path}" "${s3_url}" --delete --acl ${aclcmd}
+aws --debug s3 sync "${expanded_upload_local_path}" "${s3_url}" --delete --acl ${aclcmd}
 
 if [[ "${set_acl_only_on_changed_objets}" != "true" ]] ; then
   echo_details "Setting ACL on every object, this can take some time..."
@@ -151,7 +151,7 @@ if [[ "${set_acl_only_on_changed_objets}" != "true" ]] ; then
   for a_s3_obj_key in $(aws s3api list-objects --bucket "${upload_bucket}" --query Contents[].[Key] --output text)
   do
     echo_info "$ aws s3api put-object-acl --acl ${aclcmd} --bucket ${upload_bucket} --key ${a_s3_obj_key}"
-    aws s3api put-object-acl --acl ${aclcmd} --bucket "${upload_bucket}" --key "${a_s3_obj_key}"
+    aws --debug s3api put-object-acl --acl ${aclcmd} --bucket "${upload_bucket}" --key "${a_s3_obj_key}"
   done
   unset IFS
 else
